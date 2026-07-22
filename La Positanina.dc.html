@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Mulish:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:#FBF6EC;color:#3A3733;font-family:'Mulish',sans-serif;-webkit-font-smoothing:antialiased}
+  ::selection{background:#F3E3AE;color:#2C3E63}
+  input,textarea,select,button{font-family:inherit}
+  @keyframes lp_float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+  @keyframes lp_up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes lp_pulse{0%{box-shadow:0 0 0 0 rgba(37,158,93,.45)}70%{box-shadow:0 0 0 16px rgba(37,158,93,0)}100%{box-shadow:0 0 0 0 rgba(37,158,93,0)}}
+</style>
+</helmet>
+
+<div style="min-height:100%;background:#FBF6EC;overflow-x:hidden">
+
+  <!-- ============ HEADER ============ -->
+  <header style="position:sticky;top:0;z-index:60;background:rgba(251,246,236,.86);backdrop-filter:blur(10px);border-bottom:1px solid #EADFC9">
+    <div style="max-width:1240px;margin:0 auto;padding:14px clamp(18px,4vw,40px);display:flex;align-items:center;justify-content:space-between;gap:18px">
+      <a href="#home" style="display:flex;align-items:center;gap:12px;text-decoration:none">
+        <img src="assets/logo.jpeg" alt="La Positanina" style="width:{{ logoSize }};height:{{ logoSize }};border-radius:50%;object-fit:cover;box-shadow:0 3px 10px rgba(44,62,99,.18)">
+        <span style="white-space:nowrap;font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:{{ brandSize }};color:#2C3E63;letter-spacing:.3px">La Positanina</span>
+      </a>
+
+      <sc-if value="{{ showDesktopNav }}" hint-placeholder-val="{{ true }}">
+        <nav style="display:flex;align-items:center;gap:18px">
+          <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="6">
+            <a href="{{ n.href }}" style="white-space:nowrap;text-decoration:none;color:#4A463E;font-size:14px;font-weight:500;letter-spacing:.2px;padding-bottom:3px;border-bottom:1.5px solid transparent" style-hover="border-bottom:1.5px solid #CDA85A;color:#2C3E63">{{ n.label }}</a>
+          </sc-for>
+        </nav>
+      </sc-if>
+
+      <div style="display:flex;align-items:center;gap:10px">
+        <a href="{{ instagram }}" rel="noopener" aria-label="Instagram" style="width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#2C3E63;background:#fff;border:1px solid #EADFC9;text-decoration:none" style-hover="background:#F3E3AE;border-color:#F3E3AE">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2" y="2" width="20" height="20" rx="5.5"></rect><circle cx="12" cy="12" r="4.2"></circle><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"></circle></svg>
+        </a>
+        <button onClick="{{ openCart }}" aria-label="Carrello" style="position:relative;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#2C3E63;background:#fff;border:1px solid #EADFC9;cursor:pointer" style-hover="background:#F3E3AE;border-color:#F3E3AE">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 7h13l-1.4 9.5a2 2 0 0 1-2 1.7H9.4a2 2 0 0 1-2-1.7L6 4H3"></path><circle cx="9.5" cy="20.5" r="1.1" fill="currentColor" stroke="none"></circle><circle cx="16" cy="20.5" r="1.1" fill="currentColor" stroke="none"></circle></svg>
+          <sc-if value="{{ hasCart }}" hint-placeholder-val="{{ false }}">
+            <span style="position:absolute;top:-3px;right:-3px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:#CDA85A;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center">{{ cart }}</span>
+          </sc-if>
+        </button>
+        <sc-if value="{{ showHamburger }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ toggleMenu }}" aria-label="Menu" style="width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#2C3E63;background:#fff;border:1px solid #EADFC9;cursor:pointer">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+          </button>
+        </sc-if>
+      </div>
+    </div>
+
+    <sc-if value="{{ mobilePanelOpen }}" hint-placeholder-val="{{ false }}">
+      <nav style="border-top:1px solid #EADFC9;background:#FBF6EC;padding:8px clamp(18px,4vw,40px) 16px;display:flex;flex-direction:column;gap:2px">
+        <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="6">
+          <a href="{{ n.href }}" onClick="{{ closeMenu }}" style="text-decoration:none;color:#3A3733;font-size:16px;font-weight:500;padding:11px 6px;border-bottom:1px solid #F0E7D4">{{ n.label }}</a>
+        </sc-for>
+      </nav>
+    </sc-if>
+  </header>
+
+  <!-- ============ HERO ============ -->
+  <section id="home" style="position:relative;background:linear-gradient(160deg,#FDFAF1 0%,#F3EAD6 60%,#E7DFC9 100%)">
+    <div style="max-width:1240px;margin:0 auto;padding:clamp(40px,6vw,82px) clamp(18px,4vw,40px);display:grid;grid-template-columns:{{ heroCols }};gap:clamp(30px,5vw,64px);align-items:center">
+      <div>
+        <div style="display:inline-flex;align-items:center;gap:9px;padding:6px 15px;border-radius:30px;background:#fff;border:1px solid #EADFC9;color:#5B7DA6;font-size:12.5px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;margin-bottom:24px">
+          <span style="width:6px;height:6px;border-radius:50%;background:#CDA85A"></span> Vico Equense · Napoli
+        </div>
+        <h1 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(38px,6vw,68px);line-height:1.03;color:#2C3E63;margin:0 0 22px;letter-spacing:.3px">Borsette crochet<br>fatte a mano a<br><span style="font-style:italic;color:#5B7DA6">Vico Equense</span></h1>
+        <p style="font-size:clamp(16px,2vw,19px);line-height:1.65;color:#6E675A;max-width:480px;margin:0 0 32px">Colori mediterranei, dettagli artigianali e modelli personalizzabili firmati La Positanina.</p>
+        <div style="display:flex;flex-direction:{{ heroCtaDir }};flex-wrap:wrap;gap:14px">
+          <a href="#collezione" style="text-decoration:none;background:#2C3E63;color:#FBF6EC;padding:15px 30px;border-radius:40px;font-weight:600;font-size:15px;text-align:center;box-shadow:0 10px 24px rgba(44,62,99,.22)" style-hover="background:#22304e">Scopri la collezione</a>
+          <a href="#personalizzate" style="text-decoration:none;background:#fff;color:#2C3E63;padding:15px 30px;border-radius:40px;font-weight:600;font-size:15px;text-align:center;border:1.5px solid #DCCFB2" style-hover="border-color:#CDA85A;background:#FFFCF4">Richiedi una borsa personalizzata</a>
+        </div>
+        <div style="display:flex;gap:26px;margin-top:38px;flex-wrap:wrap">
+          <div><div style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;color:#2C3E63;line-height:1">100%</div><div style="font-size:13px;color:#8A8377;margin-top:2px">Fatto a mano</div></div>
+          <div style="width:1px;background:#DCCFB2"></div>
+          <div><div style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;color:#2C3E63;line-height:1">Su misura</div><div style="font-size:13px;color:#8A8377;margin-top:2px">Colori e modelli</div></div>
+          <div style="width:1px;background:#DCCFB2"></div>
+          <div><div style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;color:#2C3E63;line-height:1">Pezzo unico</div><div style="font-size:13px;color:#8A8377;margin-top:2px">Lavorazione lenta</div></div>
+        </div>
+      </div>
+
+      <div style="position:relative">
+        <div style="position:relative;aspect-ratio:4/5;border-radius:26px;overflow:hidden;box-shadow:0 30px 60px rgba(44,62,99,.18);border:1px solid rgba(255,255,255,.6);background-color:#CBDDE8;background-image:radial-gradient(circle at 6px 6px,rgba(255,255,255,.5) 1.8px,transparent 2.3px),radial-gradient(circle at 16px 16px,rgba(44,62,99,.08) 1.8px,transparent 2.3px);background-size:20px 20px">
+          <img src="{{ heroImg }}" onError="{{ hideImg }}" alt="Borsa crochet La Positanina" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+        </div>
+        <div style="position:absolute;bottom:{{ heroBadgeBottom }};left:{{ heroBadgeLeft }};background:#fff;border-radius:18px;padding:14px 18px;box-shadow:0 14px 34px rgba(44,62,99,.16);display:flex;align-items:center;gap:12px;border:1px solid #F0E7D4">
+          <div style="width:42px;height:42px;border-radius:50%;background:#F3E3AE;display:flex;align-items:center;justify-content:center;font-size:22px">🧶</div>
+          <div><div style="font-weight:700;font-size:14px;color:#2C3E63">Cotone premium</div><div style="font-size:12px;color:#8A8377">filato selezionato a mano</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COLLEZIONE ============ -->
+  <section id="collezione" style="max-width:1240px;margin:0 auto;padding:clamp(56px,8vw,100px) clamp(18px,4vw,40px)">
+    <div style="text-align:center;max-width:600px;margin:0 auto 40px">
+      <div style="font-size:13px;font-weight:600;letter-spacing:2.4px;text-transform:uppercase;color:#CDA85A;margin-bottom:12px">La collezione</div>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(30px,4.5vw,46px);color:#2C3E63;margin:0 0 14px;line-height:1.08">Modelli pensati per il sole</h2>
+      <p style="font-size:16.5px;line-height:1.6;color:#6E675A;margin:0">Ogni borsa è realizzata su ordinazione. Scegli un modello pronto o partiamo insieme da un'idea tutta tua.</p>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-bottom:42px">
+      <sc-for list="{{ filters }}" as="f" hint-placeholder-count="5">
+        <button onClick="{{ f.onClick }}" style="padding:9px 20px;border-radius:30px;font-size:14px;font-weight:600;cursor:pointer;border:1.5px solid {{ f.border }};background:{{ f.bg }};color:{{ f.color }}">{{ f.label }}</button>
+      </sc-for>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:26px">
+      <sc-for list="{{ products }}" as="p" hint-placeholder-count="6">
+        <article style="background:#fff;border-radius:20px;overflow:hidden;border:1px solid #F0E7D4;box-shadow:0 6px 22px rgba(44,62,99,.06);display:flex;flex-direction:column" style-hover="box-shadow:0 18px 40px rgba(44,62,99,.14)">
+          <div style="position:relative;aspect-ratio:1/1;background-color:{{ p.bg }};background-image:radial-gradient(circle at 5px 5px,rgba(255,255,255,.5) 1.5px,transparent 2px),radial-gradient(circle at 13px 13px,rgba(44,62,99,.07) 1.5px,transparent 2px);background-size:16px 16px">
+            <img src="{{ p.img }}" onError="{{ hideImg }}" alt="{{ p.name }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+            <span style="position:absolute;top:12px;left:12px;z-index:2;pointer-events:none;background:rgba(251,246,236,.9);color:#5B7DA6;font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;padding:4px 10px;border-radius:20px">{{ p.cat }}</span>
+          </div>
+          <div style="padding:20px 20px 22px;display:flex;flex-direction:column;flex:1">
+            <h3 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:24px;color:#2C3E63;margin:0 0 6px">{{ p.name }}</h3>
+            <p style="font-size:14px;line-height:1.55;color:#7A7468;margin:0 0 14px;flex:1">{{ p.desc }}</p>
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:16px">
+              <span style="font-size:12px;color:#9A9282;margin-right:2px">Colori:</span>
+              <sc-for list="{{ p.colors }}" as="c" hint-placeholder-count="3">
+                <span title="{{ c.name }}" style="width:16px;height:16px;border-radius:50%;background:{{ c.hex }};border:1.5px solid rgba(44,62,99,.14);display:inline-block"></span>
+              </sc-for>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+              <span style="font-family:'Cormorant Garamond',serif;font-size:23px;font-weight:600;color:#2C3E63">{{ p.price }}</span>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button onClick="{{ p.open }}" style="flex:1;padding:11px;border-radius:30px;font-size:13.5px;font-weight:600;cursor:pointer;background:#fff;color:#2C3E63;border:1.5px solid #DCCFB2" style-hover="border-color:#CDA85A">Vedi dettagli</button>
+              <button onClick="{{ p.buy }}" style="flex:1;padding:11px;border-radius:30px;font-size:13.5px;font-weight:600;cursor:pointer;background:#2C3E63;color:#FBF6EC;border:1.5px solid #2C3E63" style-hover="background:#22304e">Acquista</button>
+            </div>
+          </div>
+        </article>
+      </sc-for>
+    </div>
+    <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
+      <p style="text-align:center;color:#8A8377;padding:40px 0;font-size:16px">Nessun modello in questa categoria al momento — scrivici per una creazione su misura.</p>
+    </sc-if>
+  </section>
+
+  <!-- ============ PERSONALIZZATE ============ -->
+  <section id="personalizzate" style="background:linear-gradient(150deg,#EAF1F6 0%,#F3EAD6 100%)">
+    <div style="max-width:1240px;margin:0 auto;padding:clamp(56px,8vw,100px) clamp(18px,4vw,40px);display:grid;grid-template-columns:{{ formCols }};gap:clamp(34px,5vw,64px);align-items:start">
+      <div>
+        <div style="font-size:13px;font-weight:600;letter-spacing:2.4px;text-transform:uppercase;color:#CDA85A;margin-bottom:12px">Borse personalizzate</div>
+        <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(30px,4.5vw,46px);color:#2C3E63;margin:0 0 18px;line-height:1.08">La tua borsa, esattamente come la sogni</h2>
+        <p style="font-size:16.5px;line-height:1.65;color:#5E5849;margin:0 0 26px;max-width:480px">Puoi richiedere un pezzo su misura scegliendo colori, dimensioni, modello e dettagli. Raccontaci la tua idea: la realizziamo a mano, con i tempi e la cura che merita.</p>
+        <ul style="list-style:none;padding:0;margin:0 0 30px;display:flex;flex-direction:column;gap:14px">
+          <sc-for list="{{ customSteps }}" as="s" hint-placeholder-count="4">
+            <li style="display:flex;align-items:center;gap:14px">
+              <span style="flex:none;width:34px;height:34px;border-radius:50%;background:#fff;border:1px solid #DCCFB2;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-weight:600;color:#CDA85A;font-size:18px">{{ s.n }}</span>
+              <span style="font-size:15.5px;color:#4A463E">{{ s.t }}</span>
+            </li>
+          </sc-for>
+        </ul>
+        <a href="{{ waCustom }}" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;text-decoration:none;background:#259E5D;color:#fff;padding:13px 24px;border-radius:40px;font-weight:600;font-size:15px;box-shadow:0 10px 24px rgba(37,158,93,.25)" style-hover="background:#1f8a51">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.4-.7-2.9-1.2-4.7-4.1-4.9-4.3-.1-.2-1.1-1.5-1.1-2.8 0-1.3.7-2 .9-2.2.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.3 0 .5l-.4.6c-.2.2-.3.4-.1.7.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.3.1.5.1.7-.1l.8-1c.2-.2.4-.2.6-.1l1.9.9c.3.1.4.2.5.3.1.2.1.7-.1 1.3Z"></path></svg>
+          Scrivimi su WhatsApp
+        </a>
+      </div>
+
+      <div style="background:#fff;border-radius:24px;padding:clamp(24px,3vw,34px);box-shadow:0 18px 44px rgba(44,62,99,.12);border:1px solid #F0E7D4">
+        <sc-if value="{{ formSent }}" hint-placeholder-val="{{ false }}">
+          <div style="text-align:center;padding:30px 6px">
+            <div style="width:64px;height:64px;border-radius:50%;background:#EDF6F0;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:30px">💛</div>
+            <h3 style="font-family:'Cormorant Garamond',serif;font-size:28px;color:#2C3E63;margin:0 0 10px">Grazie di cuore!</h3>
+            <p style="color:#6E675A;font-size:15.5px;line-height:1.6;margin:0 0 22px">Si \u00E8 aperto il tuo programma di posta con la richiesta gi\u00E0 pronta: controlla e premi <strong>Invia</strong> per recapitarla a La Positanina. Ti risponderemo presto con tutti i dettagli.</p>
+            <button onClick="{{ resetForm }}" style="padding:11px 22px;border-radius:30px;background:#fff;border:1.5px solid #DCCFB2;color:#2C3E63;font-weight:600;cursor:pointer">Invia un'altra richiesta</button>
+          </div>
+        </sc-if>
+        <sc-if value="{{ formOpen }}" hint-placeholder-val="{{ true }}">
+          <form onSubmit="{{ submitForm }}" style="display:flex;flex-direction:column;gap:14px">
+            <h3 style="font-family:'Cormorant Garamond',serif;font-size:26px;color:#2C3E63;margin:0 0 4px">Richiedi la tua borsa</h3>
+            <div style="display:grid;grid-template-columns:{{ fieldCols }};gap:14px">
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#5E5849">Nome
+                <input required name="nome" type="text" placeholder="Il tuo nome" style="padding:12px 14px;border-radius:12px;border:1.5px solid #E6DAC2;background:#FDFAF2;font-size:14.5px;color:#3A3733;outline:none" style-focus="border-color:#CDA85A">
+              </label>
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#5E5849">Telefono
+                <input name="telefono" type="tel" placeholder="Il tuo numero" style="padding:12px 14px;border-radius:12px;border:1.5px solid #E6DAC2;background:#FDFAF2;font-size:14.5px;color:#3A3733;outline:none" style-focus="border-color:#CDA85A">
+              </label>
+            </div>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#5E5849">Email
+              <input required name="email" type="email" placeholder="La tua email" style="padding:12px 14px;border-radius:12px;border:1.5px solid #E6DAC2;background:#FDFAF2;font-size:14.5px;color:#3A3733;outline:none" style-focus="border-color:#CDA85A">
+            </label>
+            <div style="display:grid;grid-template-columns:{{ fieldCols }};gap:14px">
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#5E5849">Modello desiderato
+                <select name="modello" style="padding:12px 14px;border-radius:12px;border:1.5px solid #E6DAC2;background:#FDFAF2;font-size:14.5px;color:#3A3733;outline:none" style-focus="border-color:#CDA85A">
+                  <option>Pochette</option><option>Shopper</option><option>Tracolla</option><option>Non so ancora</option>
+                </select>
+              </label>
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#5E5849">Colori preferiti
+                <input name="colori" type="text" placeholder="es. blu polvere, crema" style="padding:12px 14px;border-radius:12px;border:1.5px solid #E6DAC2;background:#FDFAF2;font-size:14.5px;color:#3A3733;outline:none" style-focus="border-color:#CDA85A">
+              </label>
+            </div>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#5E5849">Messaggio
+              <textarea name="messaggio" rows="3" placeholder="Raccontaci la tua idea, l'occasione, i dettagli che desideri…" style="padding:12px 14px;border-radius:12px;border:1.5px solid #E6DAC2;background:#FDFAF2;font-size:14.5px;color:#3A3733;outline:none;resize:vertical" style-focus="border-color:#CDA85A"></textarea>
+            </label>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#5E5849">Foto di ispirazione <span style="font-weight:400;color:#9A9282">(facoltativa)</span>
+              <input type="file" accept="image/*" style="padding:10px 12px;border-radius:12px;border:1.5px dashed #D6C9AC;background:#FDFAF2;font-size:13px;color:#7A7468">
+            </label>
+            <button type="submit" style="margin-top:4px;padding:15px;border-radius:30px;background:#2C3E63;color:#FBF6EC;font-weight:600;font-size:15px;border:none;cursor:pointer;box-shadow:0 10px 22px rgba(44,62,99,.2)" style-hover="background:#22304e">Invia richiesta personalizzata</button>
+          </form>
+        </sc-if>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RECENSIONI ============ -->
+  <section id="recensioni" style="max-width:1240px;margin:0 auto;padding:clamp(56px,8vw,100px) clamp(18px,4vw,40px)">
+    <div style="text-align:center;max-width:600px;margin:0 auto 44px">
+      <div style="font-size:13px;font-weight:600;letter-spacing:2.4px;text-transform:uppercase;color:#CDA85A;margin-bottom:12px">Recensioni</div>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(30px,4.5vw,46px);color:#2C3E63;margin:0;line-height:1.08">Le parole di chi le porta</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px">
+      <sc-for list="{{ reviews }}" as="r" hint-placeholder-count="3">
+        <figure style="margin:0;background:#fff;border-radius:20px;padding:28px 26px;border:1px solid #F0E7D4;box-shadow:0 6px 22px rgba(44,62,99,.06);display:flex;flex-direction:column;gap:16px">
+          <div style="color:#CDA85A;font-size:17px;letter-spacing:3px">{{ r.stars }}</div>
+          <blockquote style="margin:0;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:21px;line-height:1.45;color:#3A3733">“{{ r.text }}”</blockquote>
+          <figcaption style="display:flex;align-items:center;gap:13px;margin-top:auto;padding-top:8px">
+            <span style="flex:none;width:46px;height:46px;border-radius:12px;background-color:{{ r.bg }};background-image:radial-gradient(circle at 4px 4px,rgba(255,255,255,.55) 1.4px,transparent 1.8px);background-size:11px 11px;border:1px solid rgba(44,62,99,.1)"></span>
+            <span><span style="display:block;font-weight:700;font-size:14.5px;color:#2C3E63">{{ r.name }}</span><span style="display:block;font-size:12.5px;color:#9A9282">{{ r.bagName }}</span></span>
+          </figcaption>
+        </figure>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- ============ CHI SIAMO ============ -->
+  <section id="chi-siamo" style="background:#2C3E63;color:#F4EEE0">
+    <div style="max-width:1240px;margin:0 auto;padding:clamp(56px,8vw,100px) clamp(18px,4vw,40px);display:grid;grid-template-columns:{{ aboutCols }};gap:clamp(34px,5vw,64px);align-items:center">
+      <div style="position:relative">
+        <div style="aspect-ratio:4/5;border-radius:24px;overflow:hidden;position:relative;box-shadow:0 26px 54px rgba(0,0,0,.28);background-color:#E5D4B0;background-image:radial-gradient(circle at 6px 6px,rgba(255,255,255,.5) 1.8px,transparent 2.3px),radial-gradient(circle at 16px 16px,rgba(44,62,99,.1) 1.8px,transparent 2.3px);background-size:20px 20px">
+          <img src="{{ aboutImg }}" onError="{{ hideImg }}" alt="L'atelier de La Positanina" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+        </div>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:600;letter-spacing:2.4px;text-transform:uppercase;color:#F3E3AE;margin-bottom:14px">Chi siamo</div>
+        <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(30px,4.5vw,46px);color:#fff;margin:0 0 22px;line-height:1.1">Nata dalla passione per il crochet e i colori del Mediterraneo</h2>
+        <p style="font-size:17px;line-height:1.75;color:#D8D0BE;margin:0 0 18px;max-width:520px">La Positanina nasce a Vico Equense, in provincia di Napoli, dalla passione per il crochet e per i colori del Mediterraneo. Ogni borsa è realizzata a mano, con attenzione ai dettagli e con la possibilità di creare pezzi personalizzati.</p>
+        <p style="font-size:17px;line-height:1.75;color:#D8D0BE;margin:0 0 28px;max-width:520px">Pensati per accompagnare momenti speciali e giornate di sole, i nostri modelli portano con sé la lentezza e la cura del fatto a mano.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:12px">
+          <span style="padding:9px 18px;border-radius:30px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);font-size:14px;color:#F4EEE0">🪡 Lavorazione lenta</span>
+          <span style="padding:9px 18px;border-radius:30px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);font-size:14px;color:#F4EEE0">🌊 Ispirazione costiera</span>
+          <span style="padding:9px 18px;border-radius:30px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);font-size:14px;color:#F4EEE0">☀️ Colori del sud</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONTATTI ============ -->
+  <section id="contatti" style="max-width:1240px;margin:0 auto;padding:clamp(56px,8vw,100px) clamp(18px,4vw,40px)">
+    <div style="background:linear-gradient(150deg,#FDFAF1,#F3EAD6);border-radius:28px;padding:clamp(34px,5vw,64px);border:1px solid #EADFC9;text-align:center">
+      <div style="font-size:13px;font-weight:600;letter-spacing:2.4px;text-transform:uppercase;color:#CDA85A;margin-bottom:12px">Contatti</div>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(28px,4.5vw,44px);color:#2C3E63;margin:0 auto 16px;line-height:1.12;max-width:640px">Hai visto un modello che ti piace o vuoi creare la tua borsa personalizzata?</h2>
+      <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:14px;margin:30px 0 34px">
+        <div style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #EADFC9;border-radius:14px;padding:14px 20px"><span style="font-size:18px">💬</span><span style="font-weight:600;color:#2C3E63">WhatsApp 334 686 5176</span></div>
+        <div style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #EADFC9;border-radius:14px;padding:14px 20px"><span style="font-size:18px">📷</span><span style="font-weight:600;color:#2C3E63">@la_positanina</span></div>
+        <div style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #EADFC9;border-radius:14px;padding:14px 20px"><span style="font-size:18px">📍</span><span style="font-weight:600;color:#2C3E63">Vico Equense, Napoli</span></div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:14px">
+        <a href="{{ waCustom }}" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;text-decoration:none;background:#259E5D;color:#fff;padding:15px 28px;border-radius:40px;font-weight:600;font-size:15px;box-shadow:0 10px 24px rgba(37,158,93,.25)" style-hover="background:#1f8a51">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.4-.7-2.9-1.2-4.7-4.1-4.9-4.3-.1-.2-1.1-1.5-1.1-2.8 0-1.3.7-2 .9-2.2.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.3 0 .5l-.4.6c-.2.2-.3.4-.1.7.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.3.1.5.1.7-.1l.8-1c.2-.2.4-.2.6-.1l1.9.9c.3.1.4.2.5.3.1.2.1.7-.1 1.3Z"></path></svg> Scrivi su WhatsApp
+        </a>
+        <a href="{{ instagram }}" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;text-decoration:none;background:#fff;color:#2C3E63;padding:15px 28px;border-radius:40px;font-weight:600;font-size:15px;border:1.5px solid #DCCFB2" style-hover="border-color:#CDA85A">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5.5"></rect><circle cx="12" cy="12" r="4.2"></circle><circle cx="17.4" cy="6.6" r="1" fill="currentColor" stroke="none"></circle></svg> Seguici su Instagram
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer style="background:#222F4C;color:#C9C3B4">
+    <div style="max-width:1240px;margin:0 auto;padding:clamp(40px,6vw,64px) clamp(18px,4vw,40px) 30px;display:grid;grid-template-columns:{{ footerCols }};gap:32px">
+      <div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+          <img src="assets/logo.jpeg" alt="La Positanina" style="width:42px;height:42px;border-radius:50%;object-fit:cover">
+          <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:22px;color:#fff">La Positanina</span>
+        </div>
+        <p style="font-size:14.5px;line-height:1.6;max-width:280px;margin:0;color:#A9A293">Borsette crochet handmade da Vico Equense.</p>
+      </div>
+      <div>
+        <h4 style="font-size:13px;letter-spacing:1.4px;text-transform:uppercase;color:#F3E3AE;margin:0 0 14px;font-weight:700">Esplora</h4>
+        <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:9px">
+          <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="6">
+            <li><a href="{{ n.href }}" style="text-decoration:none;color:#C9C3B4;font-size:14.5px" style-hover="color:#fff">{{ n.label }}</a></li>
+          </sc-for>
+        </ul>
+      </div>
+      <div>
+        <h4 style="font-size:13px;letter-spacing:1.4px;text-transform:uppercase;color:#F3E3AE;margin:0 0 14px;font-weight:700">Restiamo in contatto</h4>
+        <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:9px">
+          <li><a href="{{ waCustom }}" rel="noopener" style="text-decoration:none;color:#C9C3B4;font-size:14.5px" style-hover="color:#fff">WhatsApp · 334 686 5176</a></li>
+          <li><a href="{{ instagram }}" rel="noopener" style="text-decoration:none;color:#C9C3B4;font-size:14.5px" style-hover="color:#fff">Instagram · @la_positanina</a></li>
+          <li><span style="color:#C9C3B4;font-size:14.5px">Vico Equense, Napoli</span></li>
+        </ul>
+      </div>
+    </div>
+    <div style="border-top:1px solid rgba(255,255,255,.1);padding:18px clamp(18px,4vw,40px);text-align:center;font-size:13px;color:#8E8878">© {{ year }} La Positanina · Borsette crochet fatte a mano · Vico Equense (NA)</div>
+  </footer>
+
+  <!-- ============ FLOATING WHATSAPP ============ -->
+  <a href="{{ waCustom }}" rel="noopener" aria-label="Scrivici su WhatsApp" style="position:fixed;right:22px;bottom:22px;z-index:80;width:58px;height:58px;border-radius:50%;background:#259E5D;color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 26px rgba(37,158,93,.4);animation:lp_pulse 2.6s infinite" style-hover="background:#1f8a51">
+    <svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.4-.7-2.9-1.2-4.7-4.1-4.9-4.3-.1-.2-1.1-1.5-1.1-2.8 0-1.3.7-2 .9-2.2.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.3 0 .5l-.4.6c-.2.2-.3.4-.1.7.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.3.1.5.1.7-.1l.8-1c.2-.2.4-.2.6-.1l1.9.9c.3.1.4.2.5.3.1.2.1.7-.1 1.3Z"></path></svg>
+  </a>
+
+  <!-- ============ PRODUCT MODAL ============ -->
+  <sc-if value="{{ modalOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeProduct }}" style="position:fixed;inset:0;z-index:90;background:rgba(34,47,76,.55);backdrop-filter:blur(4px);display:flex;align-items:flex-start;justify-content:center;padding:clamp(12px,4vh,48px) 16px;overflow-y:auto">
+      <div onClick="{{ stop }}" style="background:#FBF6EC;border-radius:24px;max-width:920px;width:100%;overflow:hidden;box-shadow:0 30px 70px rgba(0,0,0,.3);animation:lp_up .4s ease both">
+        <div style="display:grid;grid-template-columns:{{ modalCols }}">
+          <div style="position:relative;min-height:300px;padding:18px;display:flex;flex-direction:column;justify-content:space-between;background-color:{{ sel.bg }};background-image:radial-gradient(circle at 6px 6px,rgba(255,255,255,.5) 1.8px,transparent 2.3px),radial-gradient(circle at 16px 16px,rgba(44,62,99,.08) 1.8px,transparent 2.3px);background-size:20px 20px">
+            <img src="{{ sel.img }}" onError="{{ hideImg }}" alt="{{ sel.name }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+            <span style="position:relative;z-index:2;pointer-events:none;align-self:flex-start;background:rgba(251,246,236,.9);color:#5B7DA6;font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;padding:5px 12px;border-radius:20px">{{ sel.cat }}</span>
+          </div>
+          <div style="padding:clamp(22px,3vw,34px);position:relative;max-height:82vh;overflow-y:auto">
+            <button onClick="{{ closeProduct }}" aria-label="Chiudi" style="position:absolute;top:16px;right:16px;width:34px;height:34px;border-radius:50%;border:1px solid #E6DAC2;background:#fff;color:#2C3E63;cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center">✕</button>
+            <h3 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:32px;color:#2C3E63;margin:0 0 6px;padding-right:30px">{{ sel.name }}</h3>
+            <div style="color:#CDA85A;font-size:15px;letter-spacing:2px;margin-bottom:14px">{{ sel.starsFull }}</div>
+            <p style="font-size:15.5px;line-height:1.65;color:#6E675A;margin:0 0 22px">{{ sel.long }}</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px 20px;margin-bottom:22px">
+              <div><div style="font-size:11.5px;letter-spacing:1px;text-transform:uppercase;color:#9A9282;margin-bottom:3px">Materiali</div><div style="font-size:14.5px;color:#3A3733;font-weight:500">{{ sel.materials }}</div></div>
+              <div><div style="font-size:11.5px;letter-spacing:1px;text-transform:uppercase;color:#9A9282;margin-bottom:3px">Dimensioni</div><div style="font-size:14.5px;color:#3A3733;font-weight:500">{{ sel.size }}</div></div>
+              <div><div style="font-size:11.5px;letter-spacing:1px;text-transform:uppercase;color:#9A9282;margin-bottom:3px">Tempi di realizzazione</div><div style="font-size:14.5px;color:#3A3733;font-weight:500">{{ sel.time }}</div></div>
+              <div><div style="font-size:11.5px;letter-spacing:1px;text-transform:uppercase;color:#9A9282;margin-bottom:3px">Prezzo</div><div style="font-size:14.5px;color:#3A3733;font-weight:500">{{ sel.price }}</div></div>
+            </div>
+            <div style="margin-bottom:10px"><div style="font-size:11.5px;letter-spacing:1px;text-transform:uppercase;color:#9A9282;margin-bottom:8px">Colori disponibili</div>
+              <div style="display:flex;flex-wrap:wrap;gap:10px">
+                <sc-for list="{{ sel.colors }}" as="c" hint-placeholder-count="3">
+                  <span style="display:inline-flex;align-items:center;gap:7px;font-size:13px;color:#5E5849;background:#fff;border:1px solid #EADFC9;border-radius:20px;padding:5px 12px 5px 6px"><span style="width:15px;height:15px;border-radius:50%;background:{{ c.hex }};border:1px solid rgba(44,62,99,.14)"></span>{{ c.name }}</span>
+                </sc-for>
+              </div>
+            </div>
+            <div style="background:#F4EFE2;border:1px solid #EADFC9;border-radius:14px;padding:14px 16px;margin:18px 0 22px;font-size:14px;color:#5E5849;line-height:1.55">🎨 <strong style="color:#2C3E63">Personalizzabile:</strong> {{ sel.custom }}</div>
+            <div style="display:flex;flex-wrap:wrap;gap:10px">
+              <a href="{{ sel.wa }}" rel="noopener" style="flex:1;min-width:160px;display:inline-flex;align-items:center;justify-content:center;gap:9px;text-decoration:none;background:#259E5D;color:#fff;padding:14px;border-radius:30px;font-weight:600;font-size:14.5px" style-hover="background:#1f8a51">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.4-.7-2.9-1.2-4.7-4.1-4.9-4.3-.1-.2-1.1-1.5-1.1-2.8 0-1.3.7-2 .9-2.2.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.3 0 .5l-.4.6c-.2.2-.3.4-.1.7.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.3.1.5.1.7-.1l.8-1c.2-.2.4-.2.6-.1l1.9.9c.3.1.4.2.5.3.1.2.1.7-.1 1.3Z"></path></svg> Richiedi su WhatsApp
+              </a>
+              <button onClick="{{ sel.buy }}" style="flex:1;min-width:160px;padding:14px;border-radius:30px;background:#2C3E63;color:#FBF6EC;font-weight:600;font-size:14.5px;border:none;cursor:pointer" style-hover="background:#22304e">Acquista online</button>
+            </div>
+            <p style="text-align:center;font-size:12px;color:#A29A88;margin:14px 0 0">E-shop in arrivo — i pulsanti d'acquisto sono già predisposti.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ============ CART TOAST ============ -->
+  <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;left:50%;bottom:96px;transform:translateX(-50%);z-index:95;background:#2C3E63;color:#FBF6EC;padding:13px 22px;border-radius:30px;font-size:14px;font-weight:500;box-shadow:0 12px 30px rgba(44,62,99,.32);animation:lp_up .3s ease both">{{ toast }}</div>
+  </sc-if>
+
+</div>
+
+<template id="__bundler_thumbnail">
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="100" fill="#2C3E63"/>
+  <circle cx="50" cy="42" r="13" fill="#F3E3AE"/>
+  <g stroke="#2C3E63" stroke-width="1.4">
+    <line x1="50" y1="29" x2="50" y2="55"/><line x1="37" y1="42" x2="63" y2="42"/>
+    <line x1="41" y1="33" x2="59" y2="51"/><line x1="59" y1="33" x2="41" y2="51"/>
+  </g>
+  <rect x="22" y="60" width="56" height="15" fill="#F3E3AE"/>
+  <text x="50" y="71" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-size="9" fill="#2C3E63">Positanina</text>
+</svg>
+</template></x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    filter: 'Tutte',
+    selectedId: null,
+    cart: 0,
+    menuOpen: false,
+    w: 1200,
+    formSent: false,
+    toast: '',
+    externalProducts: null,
+    site: { hero: 'assets/hero.jpg', about: 'assets/about.jpg' },
+  };
+
+  componentDidMount() {
+    this._onResize = () => this.setState({ w: window.innerWidth });
+    this._onResize();
+    window.addEventListener('resize', this._onResize);
+    fetch('data/products.json').then(r => r.ok ? r.json() : null).then(d => { if (d) this.setState({ externalProducts: d }); }).catch(() => {});
+    fetch('data/site.json').then(r => r.ok ? r.json() : null).then(d => { if (d) this.setState({ site: d }); }).catch(() => {});
+  }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this._onResize);
+    clearTimeout(this._t);
+  }
+
+  wa(text) {
+    return 'https://wa.me/393346865176?text=' + encodeURIComponent(text);
+  }
+
+  rawProducts() {
+    return [
+      { id: 'amalfi', name: 'Pochette Amalfi', cat: 'Pochette', bg: '#B9D0E0',
+        desc: 'Pochette serale con manico a catenella in perline, perfetta per le sere d\u2019estate.',
+        price: '\u20AC 68', colors: [{name:'Blu polvere',hex:'#A7C2D6'},{name:'Crema',hex:'#F0E6D2'},{name:'Oro chiaro',hex:'#D9BE78'}],
+        long: 'Una pochette piccola e raffinata, lavorata a punto stretto per tenere la forma. Il manico in perline si pu\u00F2 rimuovere per portarla come clutch.',
+        materials: 'Cotone 100% \u00B7 perline in vetro', size: '24 \u00D7 14 \u00D7 5 cm', time: '2\u20133 settimane',
+        custom: 'Puoi cambiare il colore del filato e scegliere perline tono su tono o a contrasto.' },
+      { id: 'vico', name: 'Shopper Vico', cat: 'Shopper', bg: '#E7D8BC',
+        desc: 'Shopper capiente da giorno, morbida e leggera, con manici comodi a spalla.',
+        price: '\u20AC 95', colors: [{name:'Sabbia',hex:'#E2D2AE'},{name:'Avorio',hex:'#F4ECDA'},{name:'Corda',hex:'#C9B894'}],
+        long: 'La borsa di tutti i giorni: entra tutto e resta leggerissima. Fondo rinforzato e fodera interna in cotone con tasca.',
+        materials: 'Cotone naturale \u00B7 fodera in cotone', size: '38 \u00D7 34 \u00D7 12 cm', time: '3 settimane',
+        custom: 'Disponibile con o senza fodera, con iniziali ricamate a mano su richiesta.' },
+      { id: 'marina', name: 'Tracolla Marina', cat: 'Tracolle', bg: '#F3E3AE',
+        desc: 'Tracolla regolabile dalla forma tonda, allegra e versatile per il giorno.',
+        price: '\u20AC 78', colors: [{name:'Giallo limone',hex:'#EBD27A'},{name:'Bianco',hex:'#F6F0E2'}],
+        long: 'Una mezzaluna morbida con tracolla regolabile in lunghezza. Chiusura con bottone in legno e laccetto in crochet.',
+        materials: 'Cotone 100% \u00B7 bottone in legno', size: '26 \u00D7 18 \u00D7 7 cm', time: '2 settimane',
+        custom: 'Tracolla disponibile anche in versione corta a spalla o lunga a bandoliera.' },
+      { id: 'limoncello', name: 'Pochette Limoncello', cat: 'Pochette', bg: '#EFE0A0',
+        desc: 'Piccola pochette solare, ispirata ai limoni della costiera.',
+        price: '\u20AC 62', colors: [{name:'Giallo sole',hex:'#E9CF74'},{name:'Verde salvia',hex:'#BFC9A6'}],
+        long: 'Un concentrato di sud: gialla come i limoni, con dettaglio a foglia in verde salvia. Perfetta come dettaglio luminoso di un look estivo.',
+        materials: 'Cotone 100%', size: '22 \u00D7 13 \u00D7 4 cm', time: '2 settimane',
+        custom: 'Si pu\u00F2 aggiungere un piccolo charm a forma di limone in ceramica.' },
+      { id: 'costiera', name: 'Shopper Costiera', cat: 'Shopper', bg: '#C7DAE6',
+        desc: 'Shopper dal blu del mare, ariosa e generosa, traforata a punto rete.',
+        price: '\u20AC 98', colors: [{name:'Azzurro',hex:'#AECBDD'},{name:'Crema',hex:'#F0E6D2'}],
+        long: 'Lavorata a punto rete per un effetto traforato leggero. Si abbina a una pochette interna staccabile per gli oggetti piccoli.',
+        materials: 'Cotone naturale \u00B7 pochette inclusa', size: '36 \u00D7 32 \u00D7 10 cm', time: '3 settimane',
+        custom: 'Punto rete pi\u00F9 fitto o pi\u00F9 aperto a seconda di come la vuoi usare.' },
+      { id: 'solara', name: 'Tracolla Solara', cat: 'Tracolle', bg: '#E5D4B0',
+        desc: 'Tracolla rotonda con dettagli oro chiaro, elegante per le occasioni.',
+        price: 'Prezzo su richiesta', colors: [{name:'Sabbia',hex:'#E2D2AE'},{name:'Oro chiaro',hex:'#D9BE78'}],
+        long: 'Forma a tamburello con manico rigido e finiture color oro chiaro. Un pezzo da cerimonia, fatto su misura per te.',
+        materials: 'Cotone \u00B7 finiture metalliche dorate', size: '\u00D8 22 \u00D7 8 cm', time: '3\u20134 settimane',
+        custom: 'Interamente personalizzabile nei colori e nelle finiture metalliche.' },
+      { id: 'sumisura', name: 'La tua, su misura', cat: 'Personalizzate', bg: '#DCE6E0',
+        desc: 'Partiamo da un\u2019idea, una foto o un\u2019occasione e creiamo la borsa che hai in mente.',
+        price: 'Prezzo su richiesta', colors: [{name:'A scelta',hex:'#F3E3AE'},{name:'A scelta',hex:'#A7C2D6'},{name:'A scelta',hex:'#E2D2AE'}],
+        long: 'Il pezzo davvero unico: scegli modello, colori, dimensioni e dettagli. Ti seguiamo passo passo, dalla prima idea alla consegna.',
+        materials: 'A scelta tra i nostri filati', size: 'Su misura', time: 'Da concordare',
+        custom: 'Tutto \u00E8 personalizzabile: forma, colori, manici, fodera, iniziali e dettagli.' },
+    ];
+  }
+
+  filterList() { return ['Tutte','Pochette','Shopper','Tracolle','Personalizzate']; }
+
+  renderVals() {
+    const { filter, selectedId, cart, menuOpen, w, formSent, toast, externalProducts, site } = this.state;
+    const isMobile = w < 1024;
+    const all = externalProducts || this.rawProducts();
+    const hideImg = (e) => { e.target.style.display = 'none'; };
+
+    const products = all
+      .filter(p => filter === 'Tutte' || p.cat === filter)
+      .map(p => ({
+        ...p,
+        ph: 'foto \u00B7 ' + p.name,
+        open: () => this.setState({ selectedId: p.id }),
+        buy: () => this.addToCart(p.name),
+      }));
+
+    const sel = selectedId ? (() => {
+      const p = all.find(x => x.id === selectedId);
+      return {
+        ...p,
+        starsFull: '\u2605\u2605\u2605\u2605\u2605',
+        wa: this.wa('Ciao La Positanina, sono interessata alla borsa \u201C' + p.name + '\u201D. Potete darmi informazioni?'),
+        buy: () => this.addToCart(p.name),
+      };
+    })() : null;
+
+    const filters = this.filterList().map(label => {
+      const active = filter === label;
+      return {
+        label,
+        onClick: () => this.setState({ filter: label }),
+        bg: active ? '#2C3E63' : '#fff',
+        color: active ? '#FBF6EC' : '#4A463E',
+        border: active ? '#2C3E63' : '#DCCFB2',
+      };
+    });
+
+    const reviews = [
+      { name: 'Giulia M.', bagName: 'Shopper Vico', stars: '\u2605\u2605\u2605\u2605\u2605', bg: '#E7D8BC',
+        text: 'Borsa bellissima, curata in ogni dettaglio. Si vede che \u00E8 fatta con amore.' },
+      { name: 'Serena P.', bagName: 'Tracolla su misura', stars: '\u2605\u2605\u2605\u2605\u2605', bg: '#C7DAE6',
+        text: 'Ho chiesto una personalizzazione nei colori e il risultato \u00E8 stato perfetto.' },
+      { name: 'Antonella R.', bagName: 'Pochette Amalfi', stars: '\u2605\u2605\u2605\u2605\u2605', bg: '#F3E3AE',
+        text: 'Elegante, leggera e diversa da tutte le borse che si trovano in giro.' },
+    ];
+
+    const customSteps = [
+      { n: '1', t: 'Raccontaci la tua idea o mandaci una foto di ispirazione' },
+      { n: '2', t: 'Scegliamo insieme modello, colori e dimensioni' },
+      { n: '3', t: 'Ti inviamo un preventivo e i tempi di realizzazione' },
+      { n: '4', t: 'Realizziamo la tua borsa a mano e te la spediamo' },
+    ];
+
+    const navItems = [
+      { label: 'Home', href: '#home' },
+      { label: 'Collezione', href: '#collezione' },
+      { label: 'Personalizzate', href: '#personalizzate' },
+      { label: 'Recensioni', href: '#recensioni' },
+      { label: 'Chi siamo', href: '#chi-siamo' },
+      { label: 'Contatti', href: '#contatti' },
+    ];
+
+    return {
+      hideImg,
+      heroImg: site.hero,
+      aboutImg: site.about,
+      navItems,
+      instagram: 'https://www.instagram.com/la_positanina?igsh=bGZzejIxMHFlOWlp',
+      waCustom: this.wa('Ciao La Positanina, vorrei informazioni sulle vostre borse crochet.'),
+      year: new Date().getFullYear(),
+
+      showDesktopNav: !isMobile,
+      showHamburger: isMobile,
+      mobilePanelOpen: isMobile && menuOpen,
+      toggleMenu: () => this.setState(s => ({ menuOpen: !s.menuOpen })),
+      closeMenu: () => this.setState({ menuOpen: false }),
+
+      heroCols: isMobile ? '1fr' : '1.05fr .95fr',
+      formCols: isMobile ? '1fr' : '1fr 1.05fr',
+      aboutCols: isMobile ? '1fr' : '.85fr 1.15fr',
+      footerCols: isMobile ? '1fr' : '1.4fr 1fr 1.2fr',
+      modalCols: isMobile ? '1fr' : '.85fr 1.15fr',
+      fieldCols: isMobile ? '1fr' : '1fr 1fr',
+      heroBadgeLeft: isMobile ? '14px' : '-24px',
+      heroBadgeBottom: isMobile ? '14px' : '-26px',
+      heroCtaDir: isMobile ? 'column' : 'row',
+      detailCols: isMobile ? '1fr 1fr' : '1fr 1fr',
+      logoSize: isMobile ? '40px' : '46px',
+      brandSize: isMobile ? '20px' : '24px',
+
+      filters,
+      products,
+      noResults: products.length === 0,
+
+      cart,
+      hasCart: cart > 0,
+      openCart: () => this.addToCart(null),
+
+      reviews,
+      customSteps,
+
+      modalOpen: !!sel,
+      sel,
+      closeProduct: () => this.setState({ selectedId: null }),
+      stop: (e) => { e.stopPropagation(); },
+
+      formOpen: !formSent,
+      formSent,
+      submitForm: (e) => { e.preventDefault(); this.sendMail(e.target); },
+      resetForm: () => this.setState({ formSent: false }),
+
+      toast,
+    };
+  }
+
+  sendMail(form) {
+    const v = (k) => (form.elements[k] && form.elements[k].value || '').trim();
+    const subject = 'Richiesta borsa personalizzata \u2014 La Positanina';
+    const body =
+      'Nome: ' + v('nome') + '\n' +
+      'Email: ' + v('email') + '\n' +
+      'Telefono: ' + v('telefono') + '\n' +
+      'Modello desiderato: ' + v('modello') + '\n' +
+      'Colori preferiti: ' + v('colori') + '\n\n' +
+      'Messaggio:\n' + v('messaggio') + '\n\n' +
+      '(Se hai una foto di ispirazione, allegala a questa email prima di inviarla.)';
+    const href = 'mailto:vitaleraffaella36@gmail.com?subject=' +
+      encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    try { window.location.href = href; } catch (err) { window.open(href, '_blank'); }
+    this.setState({ formSent: true });
+  }
+
+  addToCart(name) {
+    clearTimeout(this._t);
+    this.setState(s => ({
+      cart: s.cart + 1,
+      toast: name ? ('\u201C' + name + '\u201D aggiunta \u00B7 e-shop in arrivo') : 'Carrello pronto per l\u2019e-shop in arrivo',
+    }));
+    this._t = setTimeout(() => this.setState({ toast: '' }), 2600);
+  }
+}
+</script>
+</body>
+</html>
